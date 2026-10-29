@@ -528,6 +528,14 @@ Most service calls can be found before they crash, before the first boot or the 
 - **Fix:** hooked (`hle_net.c`, `hle_offline.c`): the `nifm` IP queries with SDK 10's `socket::InAddr` / `in_addr` mangling; `prepo::AddSessionId` / `AddInternetConnectionStatus`; `ldn::GetNetworkConfig`; SDK 11's socket overloads with plain `sockaddr` / `int` arguments (`Connect`, `Accept`, `GetSockName`, `Get` / `SetSockOpt`, `Fcntl`, `Recv`, `Send`).
 - **Found on:** [Super Mario 3D World + Bowser's Fury](../../dm/games/010028600EBDA000/README.md) (SDK 10: `nifm`, `prepo`); [Big Brain Academy: Brain vs. Brain](../../dm/games/0100620012D6E000/README.md) (SDK 11.4.3: LDN, sockets).
 
+### SSL contexts before network connections
+
+- **Symptom:** initialization returns false after opening the game's resource index, then shutdown dereferences a later object that was never initialized (`main+0x2673c8`, address `0x60db0`).
+- **Cause:** `nn::ssl::Context::Create` was an unconditional offline failure. A context is an SSL service resource created before a socket or handshake exists ([libnx `sslCreateContext`](https://github.com/switchbrew/libnx/blob/master/nx/source/services/ssl.c)); being offline does not prevent allocating it. The game's resource engine initializes its network library before offline gameplay, treats the failed context as an initialization failure, and then enters incomplete cleanup.
+- **Fix:** `hle_net.c` owns local contexts with unique IDs, version configuration, the CRL date-check option and explicit destruction. The SDK object's opaque word identifies the owning context; copies and destroyed objects cannot use it. Context queries and options use this registry instead of the SDK's encoded IPC pointers. Socket connection, TLS connection and certificate operations retain the host's existing unavailable results; creating a context does not open a network connection.
+- **Found on:** [DRAGON QUEST BUILDERS 2](../../dm/games/01001C500E72E000/README.md#startup), Hong Kong 1.7.3, SDK 5.4.0; character creation and the first ship cell verified on the Mac.
+- **Check:** `dm/host/tests/t_ssl_context.c` exercises the registered hooks, invalid versions, independent contexts and options, copied and destroyed handles, concurrent context IDs and continued network unavailability; also run under ASan/UBSan and TSan.
+
 ### Network requests stay on hold before they settle
 
 - **Symptom:** the boot sits at a black loading screen for good, CPU nearly idle, every thread waiting, about 1 boot in 6 (3 in 4 with four Mac hosts at once); the title movie is never opened, and the save files are never probed.

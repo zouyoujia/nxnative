@@ -1,0 +1,9 @@
+# Startup route for registered 1.7.3. Character creation and the first ship cell were also tested interactively.
+save	new
+keys	f900:A,f1200:A
+secs	45
+quick	30
+reach	300@40
+window	20	30
+shots	20,28
+hang	20

@@ -126,10 +126,12 @@ Finding, keying and translating shaders (`dm/gfx/tools/shader_split.py`, `dmsh_b
 ### SPKG packages in KTGL LINKDATA
 
 - **How it is stored:** shader packages (`SPKG`: `patch*/nx/shader/*.spkg` and 132 entries of `DATA1.bin`) of G2S containers as in the [RDB entry](#g2s-containers-in-ktgl-rdb-archives), one `_SPK4100` package without G2S (the post effects, `DATA1.bin` entry 549), and map and model archives carrying packages of their own.
-- **Reader:** `kt_shaders` inflates every LINKDATA entry and loose `*.gz` / `*.spkg` file ([01](../agents/01-extract.md)), takes every GLSLC output that passes the triple check, and scans its SARCs for BNSH; `DATA1.bin` is split into 64 scan jobs by entry range (`linkdata_jobs`).
+- **Reader:** `kt_shaders` inflates every LINKDATA entry and loose `*.gz` / `*.spkg` file ([01](../agents/01-extract.md)), takes every GLSLC output that passes the triple check, and scans its SARCs for BNSH. `linkdata_entries` reads the 32-byte `{offset, inflated size, stored size, compressed}` records of `DATA0.bin`/`DATA1.bin` or same-stem BIN/IDX pairs, validating each nonempty record against the data file before `linkdata_jobs` partitions it into scan ranges. Chunked zlib takes its block size from the header, checks the count and each decoded block's length, and keeps the 0x80-byte alignment of stored blocks.
 - **Symptom:** 24 shaders before the control-length fix, 1,355 after.
 - **Cause:** its GLSLC (output version 0x1d.2) writes the 0x848 / 0x850-byte controls and headerless compute code described in the RDB entry, which `glslc_shaders` used to drop. A few outputs of version 0x1d.0 keep something else at control +0x20 (odd values such as 0x136b), so a control length must be a multiple of 4; the section-header reading now takes 8 of them ([GLSLC outputs read through their section headers](#glslc-outputs-read-through-their-section-headers)).
-- **Found on:** [Fire Emblem: Three Houses](../../dm/games/010055D009F78000/README.md) (the older KTGL).
+- **Additional symptom:** UI and dialogue render while character previews and 3D scenes are absent, with unmapped vertex, pixel and compute shader keys.
+- **Additional cause:** only the `DATA0.bin`/`DATA1.bin` names were recognized, and `kt_gz` required 64 KiB blocks. BIN/IDX archives with larger blocks left their largest shader packages compressed and invisible to the loose-file scan.
+- **Found on:** [Fire Emblem: Three Houses](../../dm/games/010055D009F78000/README.md) (the older KTGL); [DRAGON QUEST BUILDERS 2](../../dm/games/01001C500E72E000/README.md#rendering) (BIN/IDX, with several block sizes).
 - **Note:** nine more shaders exist only at run time ([Built-in shaders compiled with the game's own GLSLC](#built-in-shaders-compiled-with-the-games-own-glslc)).
 
 ### GLSLC outputs in FromSoftware's BND3 and dvdbnd archives

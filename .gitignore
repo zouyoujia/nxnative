@@ -4,6 +4,16 @@
 .iosdd_*/
 .DS_Store
 __pycache__/
+# Local game packages, keys and packed apps belong outside the repository
+*.nsp
+*.nsz
+*.xci
+*.xcz
+*.nca
+prod.keys
+title.keys
+*.app/
+*.ipa
 # Made from each shader build's Mac outputs (c1_guard.py, cb_extent.py; the NSP script makes them), not committed
 dm/games/*/c1_full.tsv
 dm/games/*/cb_extent.tsv

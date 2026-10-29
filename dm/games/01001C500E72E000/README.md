@@ -30,6 +30,17 @@ The supplied XCI carries both Application and Patch content. The base control da
 
 - [SSL contexts before network connections](../../../docs/reference/services.md#ssl-contexts-before-network-connections): a context must exist even when the game will subsequently play offline.
 - [SPKG packages in KTGL LINKDATA](../../../docs/reference/shaders.md#spkg-packages-in-ktgl-linkdata): same-stem BIN/IDX indexes and header-selected zlib block sizes.
+- [Switch Pro Controller face buttons are swapped](../../../docs/reference/services.md#switch-pro-controller-face-buttons-are-swapped): Nintendo-labeled GameController elements must not be exchanged again.
+
+## Controller
+
+The physical Pro Controller was recognized, but the old common input mapping exchanged its A/B and X/Y letters. The shared Mac/iOS adapter now preserves the Pro Controller's Nintendo letters. Device enumeration confirmed the `Switch Pro Controller` category, matching A/B/X/Y labels and no system remapping; physical presses in the rebuilt game still need confirmation. See [the shared input finding](../../../docs/reference/services.md#switch-pro-controller-face-buttons-are-swapped).
+
+## Night-scene brightness (open)
+
+The opening ship deck was reported to look too dark. An isolated Mac run reached the same skeleton NPC on deck. Its captured frame has 620 draws and 58 attachment bindings, no missing shader reports or placeholder texture bindings, populated material/normal targets and active lighting/post-processing. Torch lighting in the cell is visible. The final attachment uses the game's `RGBA8_SRGB` view (`0x38`, Metal format 71); the present path reads its stored bytes without a second sRGB decode. The real-Metal present tests passed all 88 checks.
+
+No host lighting defect is established by these checks. Low-resolution frames of the original opening show a similar dark night scene, but are insufficient for a quantitative brightness comparison. A matched original Switch frame, with the same camera, dialogue and display settings, remains needed before changing exposure or gamma. No brightness override was added.
 
 ## Open
 

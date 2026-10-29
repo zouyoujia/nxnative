@@ -43,6 +43,7 @@ run: $(B)/t_language $(B)/t_motion $(B)/t_heap_size $(B)/t_touch $(B)/t_gesture 
 	$(B)/t_movie_vpx
 	$(B)/t_motion
 	$(B)/t_motion_apple
+	$(B)/t_pad_apple
 	$(B)/t_motion_pro
 	$(B)/t_motion_pro_mac
 	$(B)/t_hid
@@ -136,6 +137,9 @@ $(B)/t_language: t_language.c ../hle_sdk16.c ../hle.h ../dm.h $(GAME_H) | $(B)
 $(B)/t_motion: t_motion.c ../motion_fusion.h | $(B)
 	$(CLANG) -O1 -Wall -Werror -Wno-unused-function -o $@ t_motion.c -lm
 run: $(B)/t_motion_apple
+run: $(B)/t_pad_apple
+$(B)/t_pad_apple: t_pad_apple.m ../pad_apple.h ../dm_input.h | $(B)
+	$(CLANG) -O1 -g -fobjc-arc -Wall -Werror -I.. -o $@ t_pad_apple.m -framework Foundation -framework GameController
 $(B)/t_motion_apple: t_motion_apple.m ../motion_apple.h ../dm_input.h | $(B)
 	$(CLANG) -O1 -g -fobjc-arc -Wall -Werror -I.. -o $@ t_motion_apple.m -framework Foundation -framework GameController
 run: $(B)/t_motion_pro $(B)/t_motion_pro_mac

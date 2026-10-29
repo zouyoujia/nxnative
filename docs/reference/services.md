@@ -272,6 +272,14 @@ Most service calls can be found before they crash, before the first boot or the 
 - **Found on:** [Super Mario Galaxy](../../dm/games/010099C022B96000/README.md): the gyro pointer on the inner display, reported by klave7. Not yet tested on a device: on the Duo's inner and outer displays and on a phone with one display running iOS 27, `DM_MOTION_LOG=1` should read acc `0 0 -1` with the phone flat and still.
 - **Open:** while the scene is not full screen (Split View on the inner display) Core Motion falls back to the hardware frame without a flag that says so, and the samples are still taken as the view's frame.
 
+### Switch Pro Controller face buttons are swapped
+
+- **Symptom:** a game asks for A, but only the Pro Controller's B responds; X and Y are reversed too.
+- **Cause:** both Apple front ends unconditionally exchanged GameController A/B and X/Y to turn the conventional Xbox/PlayStation diamond into Nintendo positions. The connected controller reports `productCategory = Switch Pro Controller`, unremapped A/B/X/Y elements with matching letter labels, so exchanging them reverses an already-correct Nintendo layout.
+- **Fix:** the shared `pad_apple.h` adapter passes Switch Pro face buttons by letter and retains the existing positional mapping for other controller profiles. It reads mapped GameController elements so system remapping remains effective; each controller is classified independently on both Mac and iOS.
+- **Found on:** [DRAGON QUEST BUILDERS 2](../../dm/games/01001C500E72E000/README.md#controller), a physical Pro Controller on macOS 27.0.1. iOS device validation remains open.
+- **Check:** `t_pad_apple` covers every face-button combination on Switch Pro, Xbox, DualShock, DualSense and generic profiles, including simultaneous controllers and release.
+
 ### Switch Pro Controller advertises motion but sends zeroes
 
 - **Symptom:** a Pro Controller's buttons work on the Mac, but its gyro pointer never moves; `GCMotion` callbacks arrive with acceleration and rotation all zero.

@@ -4,6 +4,8 @@
 .iosdd_*/
 .DS_Store
 __pycache__/
+# Disposable verification artifacts without game-derived data
+.validation/
 # Local game packages, keys and packed apps belong outside the repository
 *.nsp
 *.nsz

@@ -25,7 +25,7 @@ xcodebuild -downloadComponent MetalToolchain
 git clone https://github.com/seedds/nxnative.git && cd nxnative
 brew install xcodegen zstd glslang
 brew install --cask dotnet-sdk
-python3 -m pip install lz4 capstone fonttools nsz "backports.zstd; python_version < '3.14'"
+python3 -m pip install lz4 capstone fonttools nsz zbic "backports.zstd; python_version < '3.14'"
 ```
 
 **2. Put your game in a folder**: the game, plus its update and DLC if you have them (`.nsp`, `.xci`, `.nsz` or `.xcz`):
@@ -241,7 +241,7 @@ Under a game, "60 fps with 1.2.0" means it runs at 60 fps (30 on the Switch) wit
 </tr>
 <tr>
 <td align="center" valign="top" width="33%"><img src="docs/images/dragon-quest-builders-2.jpg" width="256" alt="DRAGON QUEST BUILDERS 2"><br><small><b><a href="dm/games/01001C500E72E000/README.md">DRAGON QUEST BUILDERS 2</a></b></small></td>
-<td></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/well-dweller.jpg" width="256" alt="Well Dweller"><br><small><b><a href="dm/games/0100217023F6C000/README.md">Well Dweller</a></b></small></td>
 <td></td>
 </tr>
 </table>
